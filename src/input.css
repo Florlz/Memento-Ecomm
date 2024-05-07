@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .card {
+        @apply max-w-sm h-72 mx-5 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 hover:-translate-y-8 cursor-pointer transition-all;
+    }
+    .link {
+        @apply block font-poppins px-4 py-2 text-gray-800 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800
+    }
+    .list {
+        @apply p-2 font-poppins font-semibold hover:bg-white  hover:text-black
+    }
+}
+
+@layer utilities{
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+}

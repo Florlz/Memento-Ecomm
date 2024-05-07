@@ -1,0 +1,479 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/output.css" rel="stylesheet">
+    <link rel="stylesheet" href="src/polaroid.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>MEMENTO</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+</head>
+
+<body class="box-border">
+    <nav
+        class="z-10 flex fixed h-16 top-0 left-0 right-0 container-fluid px-4 m-auto bg-[#4e312d] items-center border-b-4 border-b-white dark:bg-gray-900">
+        <img src="images/masokto.png" class="h-20" alt="Memento Logo" />
+        <h1 class="font-notoserif font-bold text-2xl lg:text-3xl text-white flex-grow">MEMENTO</h1>
+        <button id="theme-toggle" type="button"
+            class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+            </svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                    fill-rule="evenodd" clip-rule="evenodd"></path>
+            </svg>
+        </button>
+
+        <!-- Account Image and Dropdown (Mobile and Desktop) -->
+        <div x-data="{ showDropdown: false }" class="relative lg:hidden">
+            <img @click="showDropdown = !showDropdown" src="" id="mobileAvatarImg"
+                class="h-8 w-8 rounded-full mr-2 cursor-pointer" alt="User Avatar">
+            <!-- Account Dropdown Menu -->
+            <ul x-show="showDropdown" @click.away="showDropdown = false"
+                class="absolute top-full right-0 mt-2 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-md shadow-lg">
+                <li><a href="profile.html"
+                        class="block px-4 py-2 text-gray-800 hover:bg-gray-200 dark:text-white">Profile</a></li>
+                <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 dark:text-white"
+                        onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+        <div class="relative lg:hidden" id="mobileUser">
+            <!-- This will be filled dynamically with JavaScript -->
+        </div>
+
+        <!-- Desktop Menu -->
+        <ul class="text-white text-sm lg:text-lg ml-auto hidden lg:flex transition-all duration-300">
+            <li class="inline-block mr-1"><a
+                    class="p-2 text-lg font-poppins font-semibold hover:bg-white hover:text-black"
+                    href="index.html">Home</a></li>
+            <li class="inline-block"><a class="p-2 text-lg font-poppins font-semibold hover:bg-white hover:text-black"
+                    href="index.html#store_catalog" onclick="smoothScroll(event, 'store_catalog')">Products</a></li>
+            <li class="inline-block relative lg:inline-block">
+                <a class="p-2 text-lg font-poppins font-semibold hover:bg-white hover:text-black cursor-pointer"
+                    href="cart.html">Cart</a>
+            </li>
+            <!-- Account Link with Dropdown -->
+            <li class="inline-block relative lg:inline-block" x-data="{ showDropdownDesktop: false }">
+                <div @click="showDropdownDesktop = !showDropdownDesktop" class="relative cursor-pointer">
+                    <!-- Account Image (Desktop) -->
+                    <img src="" class="h-8 w-8 rounded-full mr-2 ml-2 object-cover lg:block hidden" alt="User Avatar"
+                        id="desktopAvatarImg">
+                    <!-- Account Dropdown Menu (Desktop) -->
+                    <ul x-show="showDropdownDesktop" @click.away="showDropdownDesktop = false"
+                        class="absolute top-full right-0 mt-2 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-md shadow-lg">
+                        <li><a href="profile.html"
+                                class="block px-4 py-2 text-gray-800 hover:bg-gray-200 dark:text-white">Profile</a></li>
+                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 dark:text-white"
+                                onclick="logout()">Logout</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="inline-block relative lg:inline-block" id="desktopUser">
+                <!-- This will be filled dynamically with JavaScript -->
+            </li>
+        </ul>
+
+        <!-- Mobile Menu Button -->
+        <div x-data="{ mobileMenuOpen: false }" class="relative lg:hidden">
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-black focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+            <!-- Mobile Menu Dropdown -->
+            <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false"
+                class="absolute top-full right-0 mt-2 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-md shadow-lg">
+                <ul class="py-2">
+                    <li><a class="link" href="index.html">Home</a></li>
+                    <li><a class="link" href="index.html#store_catalog" onclick="smoothScroll(event)">Products</a></li>
+                    <li><a class="link" href="cart.html">Cart</a></li>
+                    <li><a class="link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="relative ">
+        <div class="w-full mx-auto px-4 sm:px-6 lg:px-0 mt-20 mb-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mx-auto max-md:px-2 ">
+                <div class="img">
+                    <div class="img-box h-full w-full max-lg:mx-auto object-cover border-4 rounded-md border-orange-900">
+                        <img src="images/polaroid.jpg" alt="Polaroid Printing Img"
+                            class="max-lg:mx-auto lg:ml-auto h-full">
+                    </div>
+                </div>
+                <div
+                    class="data w-full lg:pr-8 pr-0 xl:justify-start justify-center flex items-center max-lg:pb-10 xl:my-2 lg:my-5 my-0">
+                    <div class="data w-full max-w-xl">
+                        <p class="text-lg font-medium leading-8 text-indigo-600 mb-4">Products&nbsp; /&nbsp; Printing
+                        </p>
+                        <h2 class="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2 capitalize">Polaroid
+                            Printing</h2>
+                        <div class="flex flex-col sm:flex-row sm:items-center mb-6">
+                            <h6
+                                class="font-manrope font-semibold text-2xl leading-9 text-gray-900 pr-5 sm:border-r border-gray-200 mr-5">
+                                ₱150</h6>
+                        </div>
+                        <p class="text-gray-500 text-base font-normal mb-5">
+                            Introducing Memento's Polaroid Printing Service – where digital memories become timeless
+                            treasures. Our expertly crafted polaroids capture every detail, personalized to your style.
+                            With easy online ordering and high-quality printing, relive your favorite moments in style,
+                            courtesy of Memento. <button data-popover-target="popover-default" type="button"
+                                class="text-blue-800">Instructions...</button>
+
+                        <div data-popover id="popover-default" role="tooltip"
+                            class="absolute z-10 invisible inline-block w-80 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
+                            <div
+                                class="px-3 py-2 bg-amber-900 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                                <h3 class="font-semibold text-white dark:text-white">Instructions</h3>
+                            </div>
+                            <div class="px-3 py-2">
+                                <p>Choose your preferred color, size, and quantity of Polaroids to create your
+                                    personalized collection. After selecting your desired Polaroid specifications,
+                                    kindly send us an email with the images you'd like printed on your Polaroids. Our
+                                    team will ensure your chosen pictures are beautifully transformed into timeless
+                                    memories. Let's craft your personalized Polaroid collection together!
+                                </p>
+                            </div>
+                            <div data-popper-arrow></div>
+                        </div>
+                        </p>
+                        <ul class="grid gap-y-4 mb-8">
+                            <li class="flex items-center gap-3">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="26" height="26" rx="13" fill="#4F46E5" />
+                                    <path
+                                        d="M7.66669 12.629L10.4289 15.3913C10.8734 15.8357 11.0956 16.0579 11.3718 16.0579C11.6479 16.0579 11.8701 15.8357 12.3146 15.3913L18.334 9.37183"
+                                        stroke="white" stroke-width="1.6" stroke-linecap="round" />
+                                </svg>
+                                <span class="font-normal text-base text-gray-900 ">Personalized</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="26" height="26" rx="13" fill="#4F46E5" />
+                                    <path
+                                        d="M7.66669 12.629L10.4289 15.3913C10.8734 15.8357 11.0956 16.0579 11.3718 16.0579C11.6479 16.0579 11.8701 15.8357 12.3146 15.3913L18.334 9.37183"
+                                        stroke="white" stroke-width="1.6" stroke-linecap="round" />
+                                </svg>
+                                <span class="font-normal text-base text-gray-900 ">High-Quality</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="26" height="26" rx="13" fill="#4F46E5" />
+                                    <path
+                                        d="M7.66669 12.629L10.4289 15.3913C10.8734 15.8357 11.0956 16.0579 11.3718 16.0579C11.6479 16.0579 11.8701 15.8357 12.3146 15.3913L18.334 9.37183"
+                                        stroke="white" stroke-width="1.6" stroke-linecap="round" />
+                                </svg>
+                                <span class="font-normal text-base text-gray-900 ">Easy Online Ordering</span>
+                            </li>
+                            <li class="flex items-center gap-3">
+                                <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="26" height="26" rx="13" fill="#4F46E5" />
+                                    <path
+                                        d="M7.66669 12.629L10.4289 15.3913C10.8734 15.8357 11.0956 16.0579 11.3718 16.0579C11.6479 16.0579 11.8701 15.8357 12.3146 15.3913L18.334 9.37183"
+                                        stroke="white" stroke-width="1.6" stroke-linecap="round" />
+                                </svg>
+                                <span class="font-normal text-base text-gray-900 ">Timeless Keepsakes</span>
+                            </li>
+                        </ul>
+                        <div>
+                            <h1 class="text-gray-900 text-lg leading-8 font-medium mb-4">Choose your colors!</h1>
+                        </div>
+                        <div class="flex items-center gap-2 mb-4">
+                            <button class="color-option w-8 h-8 rounded-full bg-black border-2 border-white"
+                                title="Black"></button>
+                            <button class="color-option w-8 h-8 rounded-full bg-yellow-300 border-2 border-white"
+                                title="Yellow"></button>
+                            <button class="color-option w-8 h-8 rounded-full bg-pink-400 border-2 border-white"
+                                title="Pink"></button>
+                            <button class="color-option w-8 h-8 rounded-full bg-blue-700 border-2 border-white"
+                                title="Blue"></button>
+                            <button class="color-option w-8 h-8 rounded-full bg-white border-2 border-black"
+                                title="White"></button>
+                        </div>
+                        <p class="text-gray-900 text-lg leading-8 font-medium mb-4">Size</p>
+                        <div class="w-full pb-8 border-b border-gray-100 flex-wrap">
+                            <div class="grid grid-cols-5 min-[400px]:grid-cols-5 gap-2 max-w-lg">
+                                <button
+                                    class="bg-white text-center py-1.5 px-6 w-full font-semibold text-lg leading-8 text-gray-900 border border-gray-200 flex items-center rounded-full justify-center transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-100 hover:border-gray-300 visited:border-gray-300 visited:bg-gray-50">2.6
+                                    X 2.1 inches</button>
+                                <button
+                                    class="bg-white text-center py-1.5 px-6 w-full font-semibold text-lg leading-8 text-gray-900 border border-gray-200 flex items-center rounded-full justify-center transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-100 hover:border-gray-300 visited:border-gray-300 visited:bg-gray-50">3.4
+                                    X 2.1 inches</button>
+                                <button
+                                    class="bg-white text-center py-1.5 px-6 w-full font-semibold text-lg leading-8 text-gray-900 border border-gray-200 flex items-center rounded-full justify-center transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-100 hover:border-gray-300 visited:border-gray-300 visited:bg-gray-50">3.4
+                                    X 2.8 inches</button>
+                                <button
+                                    class="bg-white text-center py-1.5 px-6 w-full font-semibold text-lg leading-8 text-gray-900 border border-gray-200 flex items-center rounded-full justify-center transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-100 hover:border-gray-300 visited:border-gray-300 visited:bg-gray-50">4.3
+                                    X 3.4 inches</button>
+                                <button
+                                    class="bg-white text-center py-1.5 px-6 w-full font-semibold text-lg leading-8 text-gray-900 border border-gray-200 flex items-center rounded-full justify-center transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-100 hover:border-gray-300 visited:border-gray-300 visited:bg-gray-50">2
+                                    X 3
+                                    inches</button>
+
+                            </div>
+
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 py-8">
+                            <div class="flex sm:items-center sm:justify-center w-full">
+                                <button
+                                    class="group py-4 px-6 border border-gray-400 rounded-l-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
+                                    <svg class="stroke-gray-900 group-hover:stroke-black" width="22" height="22"
+                                        viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M16.5 11H5.5" stroke="" stroke-width="1.6" stroke-linecap="round" />
+                                        <path d="M16.5 11H5.5" stroke-opacity="0.2" stroke-width="1.6"
+                                            stroke-linecap="round" />
+                                        <path d="M16.5 11H5.5" stroke-opacity="0.2" stroke-width="1.6"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                </button>
+                                <input type="text"
+                                    class="font-semibold text-gray-900 cursor-pointer text-lg py-[13px] px-6 w-full sm:max-w-[118px] outline-0 border-y border-gray-400 bg-transparent placeholder:text-gray-900 text-center hover:bg-gray-50"
+                                    placeholder="1">
+                                <button
+                                    class="group py-4 px-6 border border-gray-400 rounded-r-full bg-white transition-all duration-300 hover:bg-gray-50 hover:shadow-sm hover:shadow-gray-300">
+                                    <svg class="stroke-gray-900 group-hover:stroke-black" width="22" height="22"
+                                        viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M11 5.5V16.5M16.5 11H5.5" stroke="#9CA3AF" stroke-width="1.6"
+                                            stroke-linecap="round" />
+                                        <path d="M11 5.5V16.5M16.5 11H5.5" stroke-opacity="0.2" stroke-width="1.6"
+                                            stroke-linecap="round" />
+                                        <path d="M11 5.5V16.5M16.5 11H5.5" stroke-opacity="0.2" stroke-width="1.6"
+                                            stroke-linecap="round" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button
+                                class="group py-4 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 transition-all duration-500 hover:bg-indigo-100">
+                                <svg class="stroke-indigo-600 " width="22" height="22" viewBox="0 0 22 22" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M10.7394 17.875C10.7394 18.6344 10.1062 19.25 9.32511 19.25C8.54402 19.25 7.91083 18.6344 7.91083 17.875M16.3965 17.875C16.3965 18.6344 15.7633 19.25 14.9823 19.25C14.2012 19.25 13.568 18.6344 13.568 17.875M4.1394 5.5L5.46568 12.5908C5.73339 14.0221 5.86724 14.7377 6.37649 15.1605C6.88573 15.5833 7.61377 15.5833 9.06984 15.5833H15.2379C16.6941 15.5833 17.4222 15.5833 17.9314 15.1605C18.4407 14.7376 18.5745 14.0219 18.8421 12.5906L19.3564 9.84059C19.7324 7.82973 19.9203 6.8243 19.3705 6.16215C18.8207 5.5 17.7979 5.5 15.7522 5.5H4.1394ZM4.1394 5.5L3.66797 2.75"
+                                        stroke="" stroke-width="1.6" stroke-linecap="round" />
+                                </svg>
+                                Add to cart</button>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button
+                                class="group transition-all duration-500 p-4 rounded-full bg-indigo-50 hover:bg-indigo-100 hover:shadow-sm hover:shadow-indigo-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26"
+                                    fill="none">
+                                    <path
+                                        d="M4.47084 14.3196L13.0281 22.7501L21.9599 13.9506M13.0034 5.07888C15.4786 2.64037 19.5008 2.64037 21.976 5.07888C24.4511 7.5254 24.4511 11.4799 21.9841 13.9265M12.9956 5.07888C10.5204 2.64037 6.49824 2.64037 4.02307 5.07888C1.54789 7.51738 1.54789 11.4799 4.02307 13.9184M4.02307 13.9184L4.04407 13.939M4.02307 13.9184L4.46274 14.3115"
+                                        stroke="#4F46E5" stroke-width="1.6" stroke-miterlimit="10"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+
+                            </button>
+                            <button
+                                class="text-center float-right w-[20rem] px-2 py-2 rounded-[100px] bg-indigo-600 flex items-center justify-center font-semibold text-lg text-white shadow-sm transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400">
+                                Buy Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-24 border-t-2">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 -mt-12">
+            <div class="mb-16">
+                <span class="text-sm text-gray-500 font-medium text-center block mb-2">Reviews</span>
+                <h2 class="text-4xl text-center font-bold text-gray-900 ">What our happy customers say!</h2>
+            </div>
+    
+            <!-- Slider wrapper -->
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper mb-10">
+                    <div class="swiper-slide">
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Slide 1 -->
+                            <div class="group bg-white border border-solid border-gray-300 rounded-xl p-6 transition-all duration-500 hover:border-indigo-600 hover:shadow-sm">
+                                <!-- User Rating -->
+                                <div class="flex items-center mb-7 gap-2 text-amber-500 transition-all duration-500">
+                                    <svg class="w-5 h-5" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M8.10326 1.31699C8.47008 0.57374 9.52992 0.57374 9.89674 1.31699L11.7063 4.98347C11.8519 5.27862 12.1335 5.48319 12.4592 5.53051L16.5054 6.11846C17.3256 6.23765 17.6531 7.24562 17.0596 7.82416L14.1318 10.6781C13.8961 10.9079 13.7885 11.2389 13.8442 11.5632L14.5353 15.5931C14.6754 16.41 13.818 17.033 13.0844 16.6473L9.46534 14.7446C9.17402 14.5915 8.82598 14.5915 8.53466 14.7446L4.91562 16.6473C4.18199 17.033 3.32456 16.41 3.46467 15.5931L4.15585 11.5632C4.21148 11.2389 4.10393 10.9079 3.86825 10.6781L0.940384 7.82416C0.346867 7.24562 0.674378 6.23765 1.4946 6.11846L5.54081 5.53051C5.86652 5.48319 6.14808 5.27862 6.29374 4.98347L8.10326 1.31699Z" fill="currentColor" />
+                                    </svg>
+                                    <span class="text-base font-semibold text-indigo-600">4.9</span>
+                                </div>
+                                <!-- User Review -->
+                                <p class="text-base text-gray-600 leading-6  transition-all duration-500 pb-8 group-hover:text-gray-800">Pagedone has made it possible for me to stay on top of my portfolio and make informed decisions quickly and easily.</p>
+                                <!-- User Details -->
+                                <div class="flex items-center gap-5 border-t border-solid border-gray-200 pt-5">
+                                    <img class="h-10 w-10" src="https://pagedone.io/asset/uploads/1696229969.png" alt="avatar" />
+                                    <div class="block">
+                                        <h5 class="text-gray-900 font-medium transition-all duration-500  mb-1">Jane D</h5>
+                                        <span class="text-sm leading-4 text-gray-500">CEO</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="group bg-white border border-solid border-gray-300 rounded-xl p-6 transition-all duration-500 hover:border-indigo-600 hover:shadow-sm">
+                            <div class="flex items-center mb-7 gap-2 text-amber-500 transition-all duration-500">
+                                <svg class="w-5 h-5" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.10326 1.31699C8.47008 0.57374 9.52992 0.57374 9.89674 1.31699L11.7063 4.98347C11.8519 5.27862 12.1335 5.48319 12.4592 5.53051L16.5054 6.11846C17.3256 6.23765 17.6531 7.24562 17.0596 7.82416L14.1318 10.6781C13.8961 10.9079 13.7885 11.2389 13.8442 11.5632L14.5353 15.5931C14.6754 16.41 13.818 17.033 13.0844 16.6473L9.46534 14.7446C9.17402 14.5915 8.82598 14.5915 8.53466 14.7446L4.91562 16.6473C4.18199 17.033 3.32456 16.41 3.46467 15.5931L4.15585 11.5632C4.21148 11.2389 4.10393 10.9079 3.86825 10.6781L0.940384 7.82416C0.346867 7.24562 0.674378 6.23765 1.4946 6.11846L5.54081 5.53051C5.86652 5.48319 6.14808 5.27862 6.29374 4.98347L8.10326 1.31699Z" fill="currentColor" />
+                                </svg>
+                                <span class="text-base font-semibold text-indigo-600">4.9</span>
+                            </div>
+                            <p class="text-base text-gray-600 leading-6  transition-all duration-500 pb-8 group-hover:text-gray-800">Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.</p>
+                            <div class="flex items-center gap-5 border-t border-solid border-gray-200 pt-5">
+                                <img class="h-10 w-10" src="https://pagedone.io/asset/uploads/1696229994.png" alt="avatar" />
+                                <div class="block">
+                                    <h5 class="text-gray-900 font-medium transition-all duration-500  mb-1">Harsh P.</h5>
+                                    <span class="text-sm leading-4 text-gray-500">Product Designer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="group bg-white border border-solid border-gray-300 rounded-xl p-6 transition-all duration-500 hover:border-indigo-600 hover:shadow-sm">
+                            <div class="flex items-center mb-7 gap-2 text-amber-500 transition-all duration-500">
+                                <svg class="w-5 h-5" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.10326 1.31699C8.47008 0.57374 9.52992 0.57374 9.89674 1.31699L11.7063 4.98347C11.8519 5.27862 12.1335 5.48319 12.4592 5.53051L16.5054 6.11846C17.3256 6.23765 17.6531 7.24562 17.0596 7.82416L14.1318 10.6781C13.8961 10.9079 13.7885 11.2389 13.8442 11.5632L14.5353 15.5931C14.6754 16.41 13.818 17.033 13.0844 16.6473L9.46534 14.7446C9.17402 14.5915 8.82598 14.5915 8.53466 14.7446L4.91562 16.6473C4.18199 17.033 3.32456 16.41 3.46467 15.5931L4.15585 11.5632C4.21148 11.2389 4.10393 10.9079 3.86825 10.6781L0.940384 7.82416C0.346867 7.24562 0.674378 6.23765 1.4946 6.11846L5.54081 5.53051C5.86652 5.48319 6.14808 5.27862 6.29374 4.98347L8.10326 1.31699Z" fill="currentColor" />
+                                </svg>
+                                <span class="text-base font-semibold text-indigo-600">4.9</span>
+                            </div>
+                            <p class="text-base text-gray-600 leading-6  transition-all duration-500 pb-8 group-hover:text-gray-800">Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.</p>
+                            <div class="flex items-center gap-5 border-t border-solid border-gray-200 pt-5">
+                                <img class="h-10 w-10" src="https://pagedone.io/asset/uploads/1696229994.png" alt="avatar" />
+                                <div class="block">
+                                    <h5 class="text-gray-900 font-medium transition-all duration-500  mb-1">Harsh P.</h5>
+                                    <span class="text-sm leading-4 text-gray-500">Product Designer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="group bg-white border border-solid border-gray-300 rounded-xl p-6 transition-all duration-500 hover:border-indigo-600 hover:shadow-sm">
+                            <div class="flex items-center mb-7 gap-2 text-amber-500 transition-all duration-500">
+                                <svg class="w-5 h-5" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.10326 1.31699C8.47008 0.57374 9.52992 0.57374 9.89674 1.31699L11.7063 4.98347C11.8519 5.27862 12.1335 5.48319 12.4592 5.53051L16.5054 6.11846C17.3256 6.23765 17.6531 7.24562 17.0596 7.82416L14.1318 10.6781C13.8961 10.9079 13.7885 11.2389 13.8442 11.5632L14.5353 15.5931C14.6754 16.41 13.818 17.033 13.0844 16.6473L9.46534 14.7446C9.17402 14.5915 8.82598 14.5915 8.53466 14.7446L4.91562 16.6473C4.18199 17.033 3.32456 16.41 3.46467 15.5931L4.15585 11.5632C4.21148 11.2389 4.10393 10.9079 3.86825 10.6781L0.940384 7.82416C0.346867 7.24562 0.674378 6.23765 1.4946 6.11846L5.54081 5.53051C5.86652 5.48319 6.14808 5.27862 6.29374 4.98347L8.10326 1.31699Z" fill="currentColor" />
+                                </svg>
+                                <span class="text-base font-semibold text-indigo-600">4.9</span>
+                            </div>
+                            <p class="text-base text-gray-600 leading-6  transition-all duration-500 pb-8 group-hover:text-gray-800">Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.</p>
+                            <div class="flex items-center gap-5 border-t border-solid border-gray-200 pt-5">
+                                <img class="h-10 w-10" src="https://pagedone.io/asset/uploads/1696229994.png" alt="avatar" />
+                                <div class="block">
+                                    <h5 class="text-gray-900 font-medium transition-all duration-500  mb-1">Harsh P.</h5>
+                                    <span class="text-sm leading-4 text-gray-500">Product Designer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div class="group bg-white border border-solid border-gray-300 rounded-xl p-6 transition-all duration-500 hover:border-indigo-600 hover:shadow-sm">
+                            <div class="flex items-center mb-7 gap-2 text-amber-500 transition-all duration-500">
+                                <svg class="w-5 h-5" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M8.10326 1.31699C8.47008 0.57374 9.52992 0.57374 9.89674 1.31699L11.7063 4.98347C11.8519 5.27862 12.1335 5.48319 12.4592 5.53051L16.5054 6.11846C17.3256 6.23765 17.6531 7.24562 17.0596 7.82416L14.1318 10.6781C13.8961 10.9079 13.7885 11.2389 13.8442 11.5632L14.5353 15.5931C14.6754 16.41 13.818 17.033 13.0844 16.6473L9.46534 14.7446C9.17402 14.5915 8.82598 14.5915 8.53466 14.7446L4.91562 16.6473C4.18199 17.033 3.32456 16.41 3.46467 15.5931L4.15585 11.5632C4.21148 11.2389 4.10393 10.9079 3.86825 10.6781L0.940384 7.82416C0.346867 7.24562 0.674378 6.23765 1.4946 6.11846L5.54081 5.53051C5.86652 5.48319 6.14808 5.27862 6.29374 4.98347L8.10326 1.31699Z" fill="currentColor" />
+                                </svg>
+                                <span class="text-base font-semibold text-indigo-600">4.9</span>
+                            </div>
+                            <p class="text-base text-gray-600 leading-6  transition-all duration-500 pb-8 group-hover:text-gray-800">Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.</p>
+                            <div class="flex items-center gap-5 border-t border-solid border-gray-200 pt-5">
+                                <img class="h-10 w-10" src="https://pagedone.io/asset/uploads/1696229994.png" alt="avatar" />
+                                <div class="block">
+                                    <h5 class="text-gray-900 font-medium transition-all duration-500  mb-1">Harsh P.</h5>
+                                    <span class="text-sm leading-4 text-gray-500">Product Designer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+    <section class="py-8 bg-white -mt-16 border-t-2 mx-6">
+        <div class="container mx-auto px-4">
+            <div class="max-w-[28rem] mx-auto text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Share Your Experience</h2>
+                <form id="reviewForm" class="flex flex-col items-center">
+                    <div class="group bg-white border border-solid border-gray-300 rounded-xl p-6 transition-all duration-500 hover:border-indigo-600 hover:shadow-sm">
+                        <div class="flex items-center mb-7 gap-2 text-amber-500 transition-all duration-500">
+                            <svg class="w-5 h-5" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8.10326 1.31699C8.47008 0.57374 9.52992 0.57374 9.89674 1.31699L11.7063 4.98347C11.8519 5.27862 12.1335 5.48319 12.4592 5.53051L16.5054 6.11846C17.3256 6.23765 17.6531 7.24562 17.0596 7.82416L14.1318 10.6781C13.8961 10.9079 13.7885 11.2389 13.8442 11.5632L14.5353 15.5931C14.6754 16.41 13.818 17.033 13.0844 16.6473L9.46534 14.7446C9.17402 14.5915 8.82598 14.5915 8.53466 14.7446L4.91562 16.6473C4.18199 17.033 3.32456 16.41 3.46467 15.5931L4.15585 11.5632C4.21148 11.2389 4.10393 10.9079 3.86825 10.6781L0.940384 7.82416C0.346867 7.24562 0.674378 6.23765 1.4946 6.11846L5.54081 5.53051C5.86652 5.48319 6.14808 5.27862 6.29374 4.98347L8.10326 1.31699Z" fill="currentColor" />
+                            </svg>
+                            <span class="text-base font-semibold text-indigo-600">Your Rating</span>
+                        </div>
+                        <input type="text" name="name" id="name" class="w-full bg-white border border-gray-300 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Your Name" required>
+                        <input type="text" name="jobTitle" id="jobTitle" class="w-full bg-white border border-gray-300 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Your Job Title" required>
+                        <input type="number" name="rating" id="rating" class="w-full bg-white border border-gray-300 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Rating (1-5)" min="1" max="5" required>
+                        <textarea name="review" id="review" cols="30" rows="5" class="w-full bg-white border border-gray-300 rounded-md p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-600" placeholder="Write your review here..." required></textarea>
+                        <button type="submit" class="inline-block bg-indigo-600 text-white px-6 py-2 rounded-md shadow-md hover:bg-indigo-700 transition-all duration-300">Submit Review</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-[#4e312d] shadow dark:bg-gray-900 container-fluid">
+        <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                    <img src="images/masokto.png" class="h-12" alt="Flowbite Logo" />
+                    <span
+                        class="self-center text-2xl font-notoserif text-white font-semibold whitespace-nowrap dark:text-white">MEMENTO</span>
+                </a>
+                <ul
+                    class="flex flex-wrap items-center mb-6 text-base font-medium font-poppins text-white sm:mb-0 dark:text-gray-400">
+                    <li>
+                        <a href="#" class="hover:underline me-4 md:me-6">Home</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline me-4 md:me-6">Products</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline me-4 md:me-6">Cart</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <hr class="my-6 border-white sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <span class="block text-sm text-white sm:text-center dark:text-gray-400">© 2023 <a
+                    href="https://flowbite.com/" class="hover:underline">MEMENTO</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <script src="https://kit.fontawesome.com/b8c24683e7.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+    <script src="js/polaroid.js"></script>
+
+</body>
+
+</html>

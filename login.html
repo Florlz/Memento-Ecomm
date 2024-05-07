@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/output.css" rel="stylesheet">
+    <title>MEMENTO</title>
+</head>
+
+<body class="h-full bg-white">
+    <div class="flex h-screen">
+        <div class=""><img class="object-cover w-[50rem] h-full" src="images/bg1.webp" alt=""></div>
+        <div class="flex flex-grow min-h-full flex-col justify-center -ml-7 px-6 py-12 lg:px-8">
+            <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+                <img class="mx-auto h-40 w-auto" src="images/masokto.png" alt="Your Company">
+                <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your
+                    account</h2>
+            </div>
+
+            <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                <form id="loginForm" class="sm:mx-auto sm:w-full sm:max-w-sm">
+                    <div>
+                        <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
+                        <div class="mt-2">
+                            <input id="username" name="username" type="text" autocomplete="username" required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between">
+                            <label for="password"
+                                class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                            <div class="text-sm">
+                                <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot
+                                    password?</a>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <input id="password" name="password" type="password" autocomplete="current-password"
+                                required
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                        </div>
+                    </div>
+
+                    <h2 class="mt-2 mb-2 p-2 border font-poppins float-right">No account yet? <a class="underline text-blue-600" href="signup.html">Sign up!</a></h2>
+
+                    <!-- Error message display -->
+                    <div id="errorContainer" class="sm:mx-auto sm:w-full sm:max-w-sm mt-4 mb-4"></div>
+
+                    <div>
+                        <button type="submit"
+                            class="flex w-full justify-center rounded-md bg-[#6d5a57] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#634540]">Sign
+                            in</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#loginForm').submit(function (e) {
+                e.preventDefault(); // Prevent form submission
+
+                // Serialize form data
+                var formData = $(this).serialize();
+
+                // Send AJAX request
+                $.ajax({
+                    type: 'POST',
+                    url: 'php/login_process.php',
+                    data: formData,
+                    success: function (response) {
+                        if (response.trim() === 'success') {
+                            // Redirect to index.html if login is successful
+                            window.location.href = 'index.html';
+                        } else {
+                            // Display error message
+                            $('#errorContainer').html('<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg" role="alert"><p class="font-bold">Error:</p><p>' + response + '</p></div>');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="src/output.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>MEMENTO</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <script>
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+</head>
+
+<body class="box-border">
+    <nav class="z-10 flex fixed h-16 top-0 left-0 right-0 container-fluid px-4 m-auto bg-[#4e312d] items-center border-b-4 border-b-white dark:bg-gray-900">
+        <img src="images/masokto.png" class="h-20" alt="Memento Logo" />
+        <h1 class="font-notoserif font-bold text-2xl lg:text-3xl text-white flex-grow">MEMENTO</h1>
+        <button id="theme-toggle" type="button" class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5">
+            <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+            <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+        </button>
+    
+        <!-- Account Image and Dropdown (Mobile and Desktop) -->
+        <div x-data="{ showDropdown: false }" class="relative lg:hidden">
+            <img @click="showDropdown = !showDropdown" src="" id="mobileAvatarImg"
+                class="h-8 w-8 rounded-full mr-2 cursor-pointer" alt="User Avatar">
+            <!-- Account Dropdown Menu -->
+            <ul x-show="showDropdown" @click.away="showDropdown = false"
+                class="absolute top-full right-0 mt-2 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-md shadow-lg">
+                <li><a href="profile.html" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a></li>
+                <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+        <div class="relative lg:hidden" id="mobileUser">
+            <!-- This will be filled dynamically with JavaScript -->
+        </div>
+    
+        <!-- Desktop Menu -->
+        <ul class="text-white text-sm lg:text-lg ml-auto hidden lg:flex transition-all duration-300">
+            <li class="inline-block mr-1"><a class="p-2 font-poppins font-semibold hover:bg-white hover:text-black"
+                    href="index.html">Home</a></li>
+            <li class="inline-block"><a class="p-2 font-poppins font-semibold hover:bg-white hover:text-black"
+                    href="index.html#store_catalog">Products</a></li>
+            <li class="inline-block relative lg:inline-block">
+                <a class="p-2 font-poppins font-semibold hover:bg-white hover:text-black cursor-pointer"
+                    href="cart.html">Cart</a>
+            </li>
+            <!-- Account Link with Dropdown -->
+            <li class="inline-block relative lg:inline-block" x-data="{ showDropdownDesktop: false }">
+                <div @click="showDropdownDesktop = !showDropdownDesktop" class="relative cursor-pointer">
+                    <!-- Account Image (Desktop) -->
+                    <img src="" class="h-8 w-8 rounded-full mr-2 ml-2 object-cover lg:block hidden" alt="User Avatar" id="desktopAvatarImg">
+                    <!-- Account Dropdown Menu (Desktop) -->
+                    <ul x-show="showDropdownDesktop" @click.away="showDropdownDesktop = false"
+                        class="absolute top-full right-0 mt-2 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-md shadow-lg">
+                        <li><a href="profile.html" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a></li>
+                        <li><a href="#" class="block px-4 py-2 text-gray-800 hover:bg-gray-200"
+                                onclick="logout()">Logout</a></li>
+                    </ul>
+                </div>
+            </li>
+            <li class="inline-block relative lg:inline-block" id="desktopUser">
+                <!-- This will be filled dynamically with JavaScript -->
+            </li>
+        </ul>
+    
+        <!-- Mobile Menu Button -->
+        <div x-data="{ mobileMenuOpen: false }" class="relative lg:hidden">
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-black focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+            <!-- Mobile Menu Dropdown -->
+            <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false"
+                class="absolute top-full right-0 mt-2 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-md shadow-lg">
+                <ul class="py-2">
+                    <li><a class="link" href="index.html">Home</a></li>
+                    <li><a class="link" href="index.html#store_catalog">Products</a></li>
+                    <li><a class="link" href="cart.html">Cart</a></li>
+                    <li><a class="link" href="#contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="max-h-fit bg-gray-100 pt-20 pb-20">
+        <h1 class="mt-14 mb-10 text-center font-poppins font-bold text-2xl lg:text-3xl text-black">MEMENTO CART</h1>
+        <div class="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
+            <div class="rounded-lg md:w-2/3">
+                <div class="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start">
+                    <img src="/images/samplepolaroid.jpg" alt="product-image" class="w-full rounded-lg sm:w-40" />
+                    <div class="sm:ml-4 sm:flex sm:w-full sm:justify-between">
+                        <div class="mt-5 sm:mt-0">
+                            <h2 class="text-2xl font-bold text-gray-900">Custom Polaroid</h2>
+                            <p class="mt-1 text-xs text-gray-700">₱650.00</p>
+                        </div>
+                        <div class="mt-4 flex justify-between sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
+                            <div class="flex items-center border-gray-100">
+                                <span
+                                    class="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50">
+                                    - </span>
+                                <input class="h-8 w-8 border bg-white text-center text-xs outline-none" type="number"
+                                    value="2" min="1" />
+                                <span
+                                    class="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50">
+                                    + </span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <p class="text-sm">₱1240.00</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor"
+                                    class="h-5 w-5 cursor-pointer duration-150 hover:text-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start">
+                    <img src="/images/samplealbum.jpg" alt="product-image" class="w-full rounded-lg sm:w-40" />
+                    <div class="sm:ml-4 sm:flex sm:w-full sm:justify-between">
+                        <div class="mt-5 sm:mt-0">
+                            <h2 class="text-2xl font-bold text-gray-900">Photo Album</h2>
+                            <p class="mt-1 text-xs text-gray-700">₱500.00</p>
+                        </div>
+                        <div class="mt-4 flex justify-between im sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
+                            <div class="flex items-center border-gray-100">
+                                <span
+                                    class="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50">
+                                    - </span>
+                                <input class="h-8 w-8 border bg-white text-center text-xs outline-none" type="number"
+                                    value="2" min="1" />
+                                <span
+                                    class="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50">
+                                    + </span>
+                            </div>
+                            <div class="flex items-center space-x-4">
+                                <p class="text-sm">₱1000.00</p>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke-width="1.5" stroke="currentColor"
+                                    class="h-5 w-5 cursor-pointer duration-150 hover:text-red-500">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sub total -->
+            <div class="mt-6 h-full rounded-lg border bg-[#4b3b42] text-white p-6 shadow-md md:mt-0 md:w-1/3">
+                <div class="mb-2 flex justify-between">
+                    <p class="">Subtotal</p>
+                    <p class="">₱2240.00</p>
+                </div>
+                <div class="flex justify-between">
+                    <p class="">Shipping</p>
+                    <p class="">$60.00</p>
+                </div>
+                <hr class="my-4" />
+                <div class="flex justify-between">
+                    <p class="text-lg font-bold">Total</p>
+                    <div class="">
+                        <p class="mb-1 text-lg font-bold">₱2350.00</p>
+                        <p class="text-sm">including VAT</p>
+                    </div>
+                </div>
+                <button
+                    class="mt-6 w-full rounded-md bg-white py-1.5 font-medium text-black hover:bg-black hover:text-white">Check
+                    out</button>
+            </div>
+        </div>
+    </div>
+    <footer class="bg-[#4e312d] shadow dark:bg-gray-900 container-fluid">
+        <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+            <div class="sm:flex sm:items-center sm:justify-between">
+                <a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                    <img src="images/masokto.png" class="h-12" alt="Flowbite Logo" />
+                    <span
+                        class="self-center text-2xl font-notoserif text-white font-semibold whitespace-nowrap dark:text-white">MEMENTO</span>
+                </a>
+                <ul
+                    class="flex flex-wrap items-center mb-6 text-base font-medium font-poppins text-white sm:mb-0 dark:text-gray-400">
+                    <li>
+                        <a href="#" class="hover:underline me-4 md:me-6">Home</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline me-4 md:me-6">Products</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline me-4 md:me-6">Cart</a>
+                    </li>
+                    <li>
+                        <a href="#" class="hover:underline">Contact</a>
+                    </li>
+                </ul>
+            </div>
+            <hr class="my-6 border-white sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <span class="block text-sm text-white sm:text-center dark:text-gray-400">© 2023 <a
+                    href="https://flowbite.com/" class="hover:underline">MEMENTO</a>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <script src="https://kit.fontawesome.com/b8c24683e7.js" crossorigin="anonymous"></script>
+    <script src="js/cart.js"></script>
+</body>
+
+</html>
